@@ -78,12 +78,12 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
                 # version check: github repository
                 type="github_release",
-                user="kontakt",
+                user="Clone5656",
                 repo="Octoprint-Filament-Reloaded",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/kontakt/Octoprint-Filament-Reloaded/archive/{target_version}.zip"
+                pip="https://github.com/Clone5656/Octoprint-Filament-Reloaded/archive/{target_version}.zip"
             )
         )
 
