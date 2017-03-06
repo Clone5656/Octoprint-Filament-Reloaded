@@ -55,11 +55,11 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 		time1=0
 		currentHALL=0
 		
-		while (time2<time1+30):
+		if (time2<time1+30):
 			currentHALL=GPIO.input(self.pin)
 			state=currentHALL
 			
-			while (state==currentHALL):
+			if (state==currentHALL):
 				time1=time.time()
 				currentHALL=GPIO.input(self.pin)
 				self._logger.debug("currentHALL [%s]"%currentHALL)
