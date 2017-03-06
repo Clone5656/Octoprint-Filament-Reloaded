@@ -30,10 +30,11 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            pin     = 4,   # Default is no pin
+            pin     = -1,   # Default is no pin
             bounce  = 250,  # Debounce 250ms
             switch  = 0    # Normally Open
         )
+
     def get_template_configs(self):
         return [dict(type="settings", custom_bindings=False)]
 
@@ -50,26 +51,13 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                 pass
 
     def check_gpio(self, channel):
+        state = GPIO.input(self.pin)
         self._logger.debug("Detected sensor [%s] state [%s]"%(channel, state))
-		time2=0
-		time1=0
-		currentHALL=0
-		
-		if (time2<time1+30):
-			currentHALL=GPIO.input(self.pin)
-			state=currentHALL
-			
-			if (state==currentHALL):
-				time1=time.time()
-				currentHALL=GPIO.input(self.pin)
-				self._logger.debug("currentHALL [%s]"%currentHALL)
-				self._logger.debug("time1 [%s]"%time1)
-				self._logger.debug("time2 [%s]"%time2)
-			time2=time.time()
-			self._logger.debug("time2 [%s]"%time2)
-		if self._printer.is_printing():
-			self._printer.toggle_pause_print()	
-	   
+        if state != self.switch:    # If the sensor is tripped
+            self._logger.debug("Sensor [%s]"%state)
+            if self._printer.is_printing():
+                self._printer.toggle_pause_print()
+
     def get_update_information(self):
         return dict(
             octoprint_filament=dict(
@@ -78,12 +66,12 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
                 # version check: github repository
                 type="github_release",
-                user="Clone5656",
+                user="kontakt",
                 repo="Octoprint-Filament-Reloaded",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/Clone5656/Octoprint-Filament-Reloaded/archive/{target_version}.zip"
+                pip="https://github.com/kontakt/Octoprint-Filament-Reloaded/archive/{target_version}.zip"
             )
         )
 
