@@ -57,6 +57,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 	currentHALL = 0.0
 	if time2 < (time1+30):
 		currentHALL=GPIO.input(self.pin)
+		time2= time.process_time()
 		state=currentHALL
         if state != self.switch:    # If the sensor is tripped
             self._logger.debug("Sensor [%s]"%state)
