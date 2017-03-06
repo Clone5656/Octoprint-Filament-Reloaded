@@ -53,18 +53,22 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                 pass
 
     def check_gpio(self, channel):
-        state = GPIO.input(self.pin)
 	time2 = 0.0
 	time1 = 0.0
 	currentHALL = 0.0
 	while time2 < (time1+30):
 		currentHALL=GPIO.input(self.pin)
-		time2= time.process_time()
 		state=currentHALL
-        if state != self.switch:    # If the sensor is tripped
-            self._logger.debug("Sensor [%s]"%state)
-            if self._printer.is_printing():
-                self._printer.toggle_pause_print()
+		while (state==currentHALL):
+			time1=time.process_time()
+			currentHALL=GPIO.input(self.pin)
+			self._logger.debug("currentHALL [%s]"%currentHALL)
+			self._logger.debug("time1 [%s]"%time1)
+			self._logger.debug("time2 [%s]"%time2)
+		time2=time.process_time()
+		self._logger.debug("time2 [%s]"%time2)
+        if self._printer.is_printing():
+        	self._printer.toggle_pause_print()
 
     def get_update_information(self):
         return dict(
