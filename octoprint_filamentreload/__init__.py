@@ -32,7 +32,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            pin     = 4,   # Default is no pin
+            pin     = 5,   # Default is no pin
             bounce  = 250,  # Debounce 250ms
             switch  = 0    # Normally Open
         )
@@ -71,6 +71,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 		time.sleep(1)
         if self._printer.is_printing():
         	self._printer.toggle_pause_print()
+		self._logger.debug("PRINT STOPPED")
 
     def get_update_information(self):
         return dict(
