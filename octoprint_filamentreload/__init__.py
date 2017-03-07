@@ -5,8 +5,6 @@ import octoprint.plugin
 from octoprint.events import eventManager, Events
 from flask import jsonify, make_response
 import RPi.GPIO as GPIO
-import time
-import datetime
 
 class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                              octoprint.plugin.EventHandlerPlugin,
@@ -32,7 +30,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            pin     = 5,   # Default is no pin
+            pin     = -1,   # Default is no pin
             bounce  = 250,  # Debounce 250ms
             switch  = 0    # Normally Open
         )
@@ -43,7 +41,8 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:  # If a new print is beginning
             self._logger.info("Printing started: Filament sensor enabled")
-            GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.check_gpio, bouncetime=self.bounce)
+            if self.pin != -1:
+                GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.check_gpio, bouncetime=self.bounce)
         elif event in (Events.PRINT_DONE, Events.PRINT_FAILED, Events.PRINT_CANCELLED):
             self._logger.info("Printing stopped: Filament sensor disabled")
             try:
@@ -52,25 +51,12 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                 pass
 
     def check_gpio(self, channel):
-	time2 = 0.0
-	time1 = 0.0
-	currentHALL = 0.0
-	while time2 < (time1+30):
-		currentHALL=GPIO.input(self.pin)
-		state=currentHALL
-		while (state==currentHALL):
-			time1=time.time()
-			currentHALL=GPIO.input(self.pin)
-			self._logger.debug("currentHALL [%s]"%currentHALL)
-			self._logger.debug("time1 [%s]"%time1)
-			self._logger.debug("time2 [%s]"%time2)
-			time.sleep(0.1)
-		time2=time.time()
-		self._logger.debug("time2 [%s]"%time2)
-		time.sleep(1)
-        if self._printer.is_printing():
-        	self._printer.toggle_pause_print()
-		self._logger.debug("PRINT STOPPED")
+        state = GPIO.input(self.pin)
+        self._logger.debug("Detected sensor [%s] state [%s]"%(channel, state))
+        if state != self.switch:    # If the sensor is tripped
+            self._logger.debug("Sensor [%s]"%state)
+            if self._printer.is_printing():
+                self._printer.toggle_pause_print()
 
     def get_update_information(self):
         return dict(
@@ -80,12 +66,12 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
                 # version check: github repository
                 type="github_release",
-                user="Clone5656",
+                user="kontakt",
                 repo="Octoprint-Filament-Reloaded",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/Clone5656/Octoprint-Filament-Reloaded/archive/{target_version}.zip"
+                pip="https://github.com/kontakt/Octoprint-Filament-Reloaded/archive/{target_version}.zip"
             )
         )
 
