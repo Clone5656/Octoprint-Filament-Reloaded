@@ -8,6 +8,8 @@ import RPi.GPIO as GPIO
 import time
 import datetime
 
+time2 = time.time() + 60
+
 class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                              octoprint.plugin.EventHandlerPlugin,
                              octoprint.plugin.TemplatePlugin,
@@ -59,13 +61,10 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         if state != self.switch:    # If the sensor is tripped
             self._logger.debug("Sensor [%s]"%state)
 	    time2 = time.time()
-	try:
-	    if time1-30 > time2:
-		if self._printer.is_printing():
-		    self._printer.toggle_pause_print()
-		    self._logger.debug("PRINT STOPPED")
-	except ValueError:
-      	    pass
+	if time1-30 > time2:
+	    if self._printer.is_printing():
+		self._printer.toggle_pause_print()
+		self._logger.debug("PRINT STOPPED")
 
     def get_update_information(self):
         return dict(
