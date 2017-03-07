@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 import time
 import datetime
 
-time2 = time.time() + 60
+global time2 = time.time() + 60
 
 class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                              octoprint.plugin.EventHandlerPlugin,
