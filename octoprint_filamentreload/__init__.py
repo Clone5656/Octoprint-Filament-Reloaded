@@ -60,13 +60,15 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 		currentHALL=GPIO.input(self.pin)
 		state=currentHALL
 		while (state==currentHALL):
-			time1=time.process_time()
+			time1=time.time()
 			currentHALL=GPIO.input(self.pin)
 			self._logger.debug("currentHALL [%s]"%currentHALL)
 			self._logger.debug("time1 [%s]"%time1)
 			self._logger.debug("time2 [%s]"%time2)
-		time2=time.process_time()
+			time.sleep(0.1)
+		time2=time.time()
 		self._logger.debug("time2 [%s]"%time2)
+		time.sleep(1)
         if self._printer.is_printing():
         	self._printer.toggle_pause_print()
 
