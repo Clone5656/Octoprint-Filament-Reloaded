@@ -5,6 +5,8 @@ import octoprint.plugin
 from octoprint.events import eventManager, Events
 from flask import jsonify, make_response
 import RPi.GPIO as GPIO
+import time
+import datetime
 
 class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                              octoprint.plugin.EventHandlerPlugin,
@@ -41,8 +43,8 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:  # If a new print is beginning
             self._logger.info("Printing started: Filament sensor enabled")
-            if self.pin != -1:
-                GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.check_gpio, bouncetime=self.bounce)
+			if self.pin != -1:
+				GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.check_gpio, bouncetime=self.bounce)
         elif event in (Events.PRINT_DONE, Events.PRINT_FAILED, Events.PRINT_CANCELLED):
             self._logger.info("Printing stopped: Filament sensor disabled")
             try:
@@ -51,12 +53,19 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                 pass
 
     def check_gpio(self, channel):
-        state = GPIO.input(self.pin)
+		time1 = time.time()
+		state = GPIO.input(self.pin)
         self._logger.debug("Detected sensor [%s] state [%s]"%(channel, state))
         if state != self.switch:    # If the sensor is tripped
             self._logger.debug("Sensor [%s]"%state)
-            if self._printer.is_printing():
-                self._printer.toggle_pause_print()
+			time2 = time.time()
+		try:
+			if time1-30 > time2:
+				if self._printer.is_printing():
+					self._printer.toggle_pause_print()
+					self._logger.debug("PRINT STOPPED")
+		except ValueError:
+			pass
 
     def get_update_information(self):
         return dict(
