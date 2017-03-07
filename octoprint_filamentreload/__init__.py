@@ -55,6 +55,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                 pass
 
     def check_gpio(self, channel):
+	global time2
 	time1 = time.time()
 	state = GPIO.input(self.pin)
         self._logger.debug("Detected sensor [%s] state [%s]"%(channel, state))
