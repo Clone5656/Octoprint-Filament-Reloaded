@@ -59,10 +59,9 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 	global time2
 	time1 = time.time()
 	state = GPIO.input(self.pin)
-        self._logger.debug("Detected sensor [%s] state [%s]"%(channel, state))
+        self._logger.info("time1: [%2] time2: [%s]"%(time1, time2))
         if state != self.switch:    # If the sensor is tripped
-            self._logger.debug("Sensor [%s]"%state)
-	    time2 = time.time()
+            time2 = time.time()
 	if time1-30 > time2:
 	    if self._printer.is_printing():
 		self._printer.toggle_pause_print()
