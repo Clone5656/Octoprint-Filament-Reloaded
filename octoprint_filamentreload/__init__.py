@@ -9,6 +9,8 @@ import time
 import datetime
 
 global time2
+global time1
+time1=time.time()
 time2 = time.time()+500
 
 class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
@@ -57,8 +59,8 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
 
     def check_gpio(self, channel):
 	global time2
-	time1=time.time()
-	while time1-30 > time2:
+	global time1
+	while time1-30 < time2:
 	    time1 = time.time()
 	    state = GPIO.input(self.pin)
             self._logger.info("time1: [%s] time2: [%s]"%(time1, time2))
