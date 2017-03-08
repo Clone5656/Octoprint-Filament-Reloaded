@@ -39,7 +39,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         return dict(
             pin     = 5,   # Default is no pin
             bounce  = 250,  # Debounce 250ms
-            switch  = 1    # Normally Open
+            switch  = 0    # Normally Open
         )
 
     def get_template_configs(self):
