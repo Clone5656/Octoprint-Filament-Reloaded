@@ -9,7 +9,7 @@ import time
 import datetime
 
 global time2
-time2 = time.time()
+time2 = time.time()+200
 
 class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
                              octoprint.plugin.EventHandlerPlugin,
@@ -37,7 +37,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         return dict(
             pin     = 5,   # Default is no pin
             bounce  = 250,  # Debounce 250ms
-            switch  = 0    # Normally Open
+            switch  = 1    # Normally Open
         )
 
     def get_template_configs(self):
@@ -62,10 +62,11 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("time1: [%s] time2: [%s]"%(time1, time2))
         if state != self.switch:    # If the sensor is tripped
             time2 = time.time()
+	    self._logger.info("Sensor tripped")
 	if time1-30 > time2:
 	    if self._printer.is_printing():
 		self._printer.toggle_pause_print()
-		self._logger.debug("PRINT STOPPED")
+		self._logger.info("PRINT STOPPED")
 
     def get_update_information(self):
         return dict(
