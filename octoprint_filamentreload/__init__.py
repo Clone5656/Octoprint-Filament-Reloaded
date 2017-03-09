@@ -60,7 +60,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
     def check_gpio(self, channel):
 	global time2
 	global time1
-	while time1-30 < time2:
+	while time1-60 < time2:
 	    time1 = time.time()
 	    state = GPIO.input(self.pin)
             self._logger.info("time1: [%s] time2: [%s]"%(time1, time2))
