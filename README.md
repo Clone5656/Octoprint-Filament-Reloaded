@@ -1,6 +1,6 @@
 # OctoPrint-FilamentReloaded
 
-Based on the Octoprint-Filament plugin by MoonshineSG (https://github.com/MoonshineSG/Octoprint-Filament), this modification adds the ability to modify your configuration through OctoPrint settings, as well as adding configurations for both NO and NC switches.
+Based on the Octoprint-Filament-Reloaded plugin by kontakt (https://github.com/kontakt/Octoprint-Filament-Reloaded), this modification is for the use of a hall sensor instead a filament sensor. It uses the hall sensor to detect the magnets on a wheel that is spun as filament is fed.
 
 Future developments are planned to include multiple filament sensors, pop-ups, pre-print validation and custom filament run-out scripting.
 
